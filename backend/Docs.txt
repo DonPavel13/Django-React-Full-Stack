@@ -1,0 +1,89 @@
+- create a virtual environment to install various python packages using " command prompt "
+    ( using poweshell it needs it's language to be installed )
+   comand -> python -m venv env
+- now activate this virtual environment
+    comand -> env\Scripts\activate.bat
+
+-install all dependencies from " requirements.txt " file
+    command -> pip install -r requirements.txt
+
+- create a new DJango project
+    comand -> django-admin startproject backend
+    - now cd to backend and create a new DJango app 
+    comand -> python manage.py startapp api ( this will create a new directory called api )
+
+- go to backend\settings.py and modify this settings: 
+    - insert " from datetime import timedelta " 
+    - insert " from dotenv import load_dotenv " 
+    - insert " import os " 
+    - call the function " load_dotenv() " that will load an environment file, to use that to credential authentication database
+    - go to " ALLOWED_HOSTS = [] " and insert into [] -> "*" allowing any different host to host our DJango application, in order to don't show any errors when we are going to deploy our application 
+    - REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+    - add this into INSTALLED_APPS object  # 7
+        "api",
+        "rest_framework",
+        "corsheaders",
+    - add this into MIDDLEWARE object # 8
+        "corsheaders.middleware.CorsMiddleware",
+
+    - add this at the bottom of the file 
+        CORS_ALLOW_ALL_ORIGINS = True
+        CORS_ALLOWS_CREDENTIALS = True
+
+JSON WEB TOKEN ( JWT ) will act as the permissions or authentication everytime we access a website.
+frontend is seperate of the backend and everytime we send a request to the backend, the backend needs to know who we are and what knd of permissions we have. So what w edo is we are going to include a token along with our request to the backend, and that token can be decoded and unserstood to represent a certain set of permissions.
+frontend send atuhecticatiopn credentials to backend, if they are correct, backend sends to frontend 2 token, " access token " ( used to request ) and " refresh token " ( used to refesh the access token ). This 2 token are beeing stored by the frontend toused them for futere request, in order to not authenticate for every request.
+if the " access token " expires ( in sthe settings.py is a settings that set upo time expiration of access token ) the refresh token is beeing sent to a specific route in the backend and assign a new access toke n to the user in order to prevent malisus attack if the access token has been leekd. Same process eith the " refresh token ", if that  expiers the user need to authenticate again to get  a new pare of tokens .
+
+
+if  get an error in the imports of django to this 
+ -> If you are using VSCode, Ctrl + Shift + P -> Type and select 'Python: Select Interpreter' and enter into your projects virtual environment
+
+WHAT DJANGO DOES ? 
+- it uses something known as ORM ( Object Relational Mapping ), it maps pyhthon objects to the corresponding
+    code that needs to be executed to make a change in the database. In the developer perpespesctive we can write 
+    python code and django, in the backend, will automatically handle all the database operations that needs 
+    to be performed.
+- SERIALIZERS, with our API we are going to use something called JSON, which is the standard language to communicate
+ with web application, so from our API we are going to accept JSON data, that contains users credentials 
+ for register a new user or returning JSON data with information about the response that this API is giving to 
+ how ever made the request. 
+ So what we have to do is creating a serializer that can take  'User " python object and converting into JSON
+ data that can be used in communication with other application
+
+
+ after inserting all the paths for tha backend in " urls.py " file we need to make in the terminal some migration 
+on aour database, this needs to do when starting a new django application 
+ -> comand -> python manage.py makemigrations
+ ones we made the migrations we need actually to migrate, applying the migrations
+  -> comand ->python manage.py migrate
+now we need to run the server
+    -> comand -> python manage.py runserver
+
+now go to frontend folder and delete css files from src folder
+than go insde " App.jsx " and remove what is inside the body of that component " <> ... </> " and 
+this " const [count, setCount] = useState(0) " and the imports that we don't use.
+Now in the " src " folder create these directory and files: 
+    - pages;
+    - styles;
+    - components;
+    - constants.js;
+    - api.js
+
+in frontend folder create an environmental file called " .env "
+
+in frontend folfer run comand -> npm inststall for updating the application 
+and then run the website in developer mode comand -> npm run dev  in the same directory " frontend "
